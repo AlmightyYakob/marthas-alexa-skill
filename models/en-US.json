@@ -1,27 +1,55 @@
 {
   "interactionModel": {
-    "languageModel": {
-      "invocationName": "hello world",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "HelloWorldIntent",
-          "samples": [
-            "hello"
-          ]
-        }
-      ]
-    }
+      "languageModel": {
+          "invocationName": "marthas",
+          "intents": [
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              },
+              {
+                  "name": "todays_flavors",
+                  "slots": [],
+                  "samples": [
+                      "what are the flavors today",
+                      "what todays flavors are",
+                      "todays flavors",
+                      "for todays flavors"
+                  ]
+              },
+              {
+                  "name": "future_flavors",
+                  "slots": [
+                      {
+                          "name": "future_date",
+                          "type": "AMAZON.DATE"
+                      },
+                      {
+                          "name": "day_of_the_week",
+                          "type": "AMAZON.DayOfWeek"
+                      }
+                  ],
+                  "samples": [
+                      "what are the flavors on {future_date}",
+                      "what are the flavors for {future_date}",
+                      "what the flavors are for {day_of_the_week}",
+                      "what the flavors are on {day_of_the_week}"
+                  ]
+              }
+          ],
+          "types": []
+      }
   }
 }

@@ -2,9 +2,9 @@ service: marthas-alexa-skill
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs10.x
   stage: ${opt:stage, 'dev'}  # default stage is dev, but you can override it.
-  region: eu-east-1           # Alexa is only available in eu-west-1 or us-east-1
+  region: us-east-1           # Alexa is only available in eu-west-1 or us-east-1
   memorySize: 256
   cfLogs: true                # AWS Cloudformation logging
 
@@ -13,7 +13,7 @@ functions:
     handler: index.handler    # path to the alexa handler - {path}/{filename}.{handler function}
     description: Martha's Dandee Creme Alexa skill
     events:
-      - alexaSkill
+      - alexaSkill: amzn1.ask.skill.3cca02ee-0ebf-4ba6-b525-7bc0369188a6
 
 plugins:
   - serverless-webpack
