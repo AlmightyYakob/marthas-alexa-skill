@@ -2,18 +2,19 @@
 /* eslint-disable  no-console */
 
 const Alexa = require('ask-sdk-core');
+const AWS = require('aws-sdk');
+const utils = require('./utils');
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Welcome to the Alexa Skills Kit, you can say hello!';
+    const speechText = 'Welcome to the Martha\'s Dandee Creme Alexa Skill. How can I help?';
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
       .getResponse();
   },
 };
@@ -25,6 +26,20 @@ const TodaysFlavorsIntentHandler = {
   },
   handle(handlerInput) {
     const speechText = 'Hello World!';
+
+    const bucketParams = {
+      Bucket: 'marthas-flavor-skill',
+      Key: 'flavor-cycle.xls',
+    };
+
+    s3 = new AWS.S3();
+    const calendar = (await s3.getObject(bucketParams).promise()).Body;
+    const currentCycle = utils.getCurrentCycle(Date());
+
+    // Look up cycle in s3 file
+    // build speech text with those flavors
+    // return speech
+
 
     return handlerInput.responseBuilder
       .speak(speechText)
