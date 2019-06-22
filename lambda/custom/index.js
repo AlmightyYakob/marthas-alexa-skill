@@ -5,6 +5,8 @@ const Alexa = require('ask-sdk-core');
 const AWS = require('aws-sdk');
 const utils = require('./utils');
 
+const SKILL_TITLE_NAME = 'Martha\'s Daily Flavors';
+
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -15,6 +17,7 @@ const LaunchRequestHandler = {
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, speechText)
       .getResponse();
   },
 };
@@ -24,12 +27,10 @@ const TodaysFlavorsIntentHandler = {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'todays_flavors';
   },
-  handle(handlerInput) {
-    const speechText = 'Hello World!';
-
+  async handle(handlerInput) {
     const bucketParams = {
       Bucket: 'marthas-flavor-skill',
-      Key: 'flavor-cycle.xls',
+      Key: 'flavor-cycle.json',
     };
 
     s3 = new AWS.S3();
@@ -37,13 +38,14 @@ const TodaysFlavorsIntentHandler = {
     const currentCycle = utils.getCurrentCycle(Date());
 
     // Look up cycle in s3 file
-    // build speech text with those flavors
-    // return speech
+    const flavors = calendar[currentCycle];
 
+    // build speech text with those flavors
+    const speechText = `Today's flavors are ${flavors.join(', ')}`
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, speechText)
       .getResponse();
   },
 };
@@ -54,12 +56,13 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
+    // Add detailing of commands
     const speechText = 'You can say hello to me!';
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, speechText)
       .getResponse();
   },
 };
@@ -75,7 +78,7 @@ const CancelAndStopIntentHandler = {
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, speechText)
       .getResponse();
   },
 };
@@ -97,10 +100,12 @@ const ErrorHandler = {
   },
   handle(handlerInput, error) {
     console.log(`Error handled: ${error.message}`);
+    const speechText = 'Sorry, I can\'t understand the command. Please say again.';
 
     return handlerInput.responseBuilder
-      .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
+      .speak(speechText)
+      .reprompt(speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, speechText)
       .getResponse();
   },
 };
