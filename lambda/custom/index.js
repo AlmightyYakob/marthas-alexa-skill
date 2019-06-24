@@ -1,7 +1,7 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-import Alexa from 'ask-sdk-core';
+import * as Alexa from 'ask-sdk-core';
 import AWS from 'aws-sdk';
 import { getCurrentCycle } from './utils';
 import { SKILL_TITLE_NAME } from './constants';
@@ -34,15 +34,13 @@ const TodaysFlavorsIntentHandler = {
       Key: 'flavor-cycle.json',
     };
 
+    // Get calendar from S3
     const s3 = new AWS.S3();
     const calendar = JSON.parse((await s3.getObject(bucketParams).promise()).Body.toString());
     const currentCycle = getCurrentCycle(Date.now());
-    console.log('calendar', calendar)
-    console.log('cycle', currentCycle)
 
     // Look up cycle in s3 file
     const flavors = calendar[currentCycle];
-    console.log('flavors', typeof flavors, flavors)
 
     // build speech text with those flavors
     const speechText = `Today's flavors are ${flavors.join(', ')}`

@@ -10,7 +10,7 @@ main:
 	cp ./package* $(BUILD_PATH)/; \
 	cd $(BUILD_PATH); \
 	npm install --only=production; \
-	zip -r $(ZIP_FILE) package* *.js *.json node_modules
+	zip -r $(ZIP_FILE) package* *.js node_modules
 
 push:
 	aws lambda update-function-code \
