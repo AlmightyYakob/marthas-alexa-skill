@@ -1,11 +1,12 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('ask-sdk-core');
-const AWS = require('aws-sdk');
-const utils = require('./utils');
+import Alexa from 'ask-sdk-core';
+import AWS from 'aws-sdk';
+import { getCurrentCycle } from './utils';
+import { SKILL_TITLE_NAME } from './constants';
 
-const SKILL_TITLE_NAME = 'Martha\'s Daily Flavors';
+
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
@@ -35,7 +36,7 @@ const TodaysFlavorsIntentHandler = {
 
     const s3 = new AWS.S3();
     const calendar = JSON.parse((await s3.getObject(bucketParams).promise()).Body.toString());
-    const currentCycle = utils.getCurrentCycle(Date.now());
+    const currentCycle = getCurrentCycle(Date.now());
     console.log('calendar', calendar)
     console.log('cycle', currentCycle)
 

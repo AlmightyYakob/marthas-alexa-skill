@@ -7,9 +7,10 @@ LAMBDA_FUNCTION_NAME=marthas-flavor-skill
 main:
 	rm -rf $(BUILD_PATH); \
 	babel --config-file $(BABELRC) -d $(BUILD_PATH) --ignore $(WEBPACK_CONFIG) *.js; \
-	cp -r ./node_modules $(BUILD_PATH)/node_modules; \
+	cp ./package* $(BUILD_PATH)/; \
 	cd $(BUILD_PATH); \
-	zip -r $(ZIP_FILE) package* *.js node_modules
+	npm install --only=production; \
+	zip -r $(ZIP_FILE) package* *.js *.json node_modules
 
 push:
 	aws lambda update-function-code \
