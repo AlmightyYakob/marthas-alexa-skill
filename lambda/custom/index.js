@@ -33,12 +33,15 @@ const TodaysFlavorsIntentHandler = {
       Key: 'flavor-cycle.json',
     };
 
-    s3 = new AWS.S3();
-    const calendar = (await s3.getObject(bucketParams).promise()).Body;
-    const currentCycle = utils.getCurrentCycle(Date());
+    const s3 = new AWS.S3();
+    const calendar = JSON.parse((await s3.getObject(bucketParams).promise()).Body.toString());
+    const currentCycle = utils.getCurrentCycle(Date.now());
+    console.log('calendar', calendar)
+    console.log('cycle', currentCycle)
 
     // Look up cycle in s3 file
     const flavors = calendar[currentCycle];
+    console.log('flavors', typeof flavors, flavors)
 
     // build speech text with those flavors
     const speechText = `Today's flavors are ${flavors.join(', ')}`

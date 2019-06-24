@@ -1,13 +1,18 @@
+import {
+    MS_PER_DAY,
+    PINNED_DATE_STRING,
+    PINNED_DAY_CYCLE,
+} from './constants';
 
-// const timezone =
 
-// Pins a date to a given day of the flavor cycle
-const CYCLE_TO_DATE_PINNING = {
-    cycle: 9,                   // 9 instead of 10 for index counting
-    date: Date(2019, 5, 8, 12),
-};
+export const getCurrentCycle = (currentDate) => {
+    const pinnedDate = new Date(PINNED_DATE_STRING);
 
-const getCurrentCycle = (currentDate) => {
-    const dayDifference = currentDate - CYCLE_TO_DATE_PINNING.date;
-    return (dayDifference + CYCLE_TO_DATE_PINNING.cycle) % 18;
+    console.log('Current Date', currentDate);
+    console.log('Pinned Date', pinnedDate);
+
+    const dayDifference = Math.floor((currentDate - pinnedDate)/MS_PER_DAY);
+    console.log('Diff', dayDifference);
+
+    return (dayDifference + PINNED_DAY_CYCLE) % 18;
 };
