@@ -2,9 +2,10 @@
 /* eslint-disable  no-console */
 
 import * as Alexa from 'ask-sdk-core';
-import AWS from 'aws-sdk';
-import { getCurrentCycle } from './utils';
-import { SKILL_TITLE_NAME } from './constants';
+import * as moment from 'moment';
+
+import { getCurrentCycle, getCalendar } from './utils';
+import { SKILL_TITLE_NAME, WEEKDAYS } from './constants';
 
 
 
@@ -29,25 +30,52 @@ const TodaysFlavorsIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'todays_flavors';
   },
   async handle(handlerInput) {
-    const bucketParams = {
-      Bucket: 'marthas-flavor-skill',
-      Key: 'flavor-cycle.json',
-    };
-
-    // Get calendar from S3
-    const s3 = new AWS.S3();
-    const calendar = JSON.parse((await s3.getObject(bucketParams).promise()).Body.toString());
+    const calendar = await getCalendar();
     const currentCycle = getCurrentCycle(Date.now());
 
-    // Look up cycle in s3 file
     const flavors = calendar[currentCycle];
-
-    // build speech text with those flavors
     const speechText = `Today's flavors are ${flavors.join(', ')}`
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .withSimpleCard(SKILL_TITLE_NAME, speechText)
+      .getResponse();
+  },
+};
+
+const FutureFlavorsIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'future_flavors';
+  },
+  async handle(handlerInput) {
+    const calendar = await getCalendar();
+    const dateSlot = handlerInput.requestEnvelope.request.intent.slots.future_date.value;
+    const daySlot = handlerInput.requestEnvelope.request.intent.slots.day_of_the_week.value;
+    console.log('DATE SLOT', dateSlot);
+    console.log('DAY SLOT', daySlot);
+
+    const date = dateSlot
+    ? new Date(dateSlot)
+    : moment().day(daySlot).toDate();
+    const currentCycle = getCurrentCycle(date);
+
+    const flavors = calendar[currentCycle];
+    const speechText = `
+      <speak>
+      The flavors for ${WEEKDAYS[date.getDay()]},
+
+      <say-as interpret-as="date">????${date.getMonth() < 9 ? 0 : ''}${date.getMonth()+1}${date.getDate() < 10 ? 0 : ''}${date.getDate()}</say-as>
+
+      are ${flavors.join(', ')}
+      </speak>
+    `;
+
+    const cardText = `The flavors for ${date.toUTCString().split(' ').slice(0, 4).join(' ')} are ${flavors.join(', ')}`;
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, cardText)
       .getResponse();
   },
 };
@@ -118,6 +146,7 @@ exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
     TodaysFlavorsIntentHandler,
+    FutureFlavorsIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler
