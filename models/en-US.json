@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "marthas",
+            "invocationName": "martha's",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -23,10 +23,12 @@
                     "name": "todays_flavors",
                     "slots": [],
                     "samples": [
-                        "what are the flavors today",
-                        "what todays flavors are",
-                        "todays flavors",
-                        "for todays flavors"
+                        "for the daily flavors",
+                        "for today's flavors",
+                        "what today's flavors are",
+                        "today's flavors",
+                        "what are today's flavors",
+                        "what are the flavors today"
                     ]
                 },
                 {
@@ -49,6 +51,20 @@
                         "the flavors for {day_of_the_week}",
                         "what are the flavors on {future_date}",
                         "what are the flavors for {future_date}"
+                    ]
+                },
+                {
+                    "name": "next_time_intent",
+                    "slots": [
+                        {
+                            "name": "flavor",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "for the next day {flavor} is available",
+                        "when do you have {flavor}",
+                        "when is {flavor} on the menu"
                     ]
                 }
             ],

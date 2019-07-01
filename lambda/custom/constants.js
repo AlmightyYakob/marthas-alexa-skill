@@ -13,13 +13,13 @@ export const CALENDAR_BUCKET_PARAMS = {
 };
 
 export const WEEKDAYS = [
+    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
     'Saturday',
-    'Sunday',
 ];
 
 export const MONTHS = [
@@ -36,3 +36,8 @@ export const MONTHS = [
     'November',
     'December',
 ];
+
+export const WORD_MAPPINGS = {
+    'Rasp': 'Raspberry',
+    'Choc': 'Chocolate',
+}

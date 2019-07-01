@@ -2,7 +2,7 @@
 /* eslint-disable  no-console */
 
 import * as Alexa from 'ask-sdk-core';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { getCurrentCycle, getCalendar } from './utils';
 import { SKILL_TITLE_NAME, WEEKDAYS } from './constants';
