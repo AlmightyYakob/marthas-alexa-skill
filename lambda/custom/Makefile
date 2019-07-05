@@ -6,7 +6,7 @@ LAMBDA_FUNCTION_NAME=marthas-flavor-skill
 
 main:
 	rm -rf $(BUILD_PATH) && \
-	babel --config-file $(BABELRC) -d $(BUILD_PATH) --ignore $(WEBPACK_CONFIG) *.js && \
+	npx babel --config-file $(BABELRC) -d $(BUILD_PATH) --ignore $(WEBPACK_CONFIG) *.js && \
 	cp ./package* $(BUILD_PATH)/ && \
 	cd $(BUILD_PATH) && \
 	npm install --only=production && \

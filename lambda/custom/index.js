@@ -4,8 +4,8 @@
 import * as Alexa from 'ask-sdk-core';
 import moment from 'moment';
 
-import { getCurrentCycle, getCalendar } from './utils';
-import { SKILL_TITLE_NAME, WEEKDAYS } from './constants';
+import { getCurrentCycle, getCalendar, replaceStrings } from './utils';
+import { SKILL_TITLE_NAME, WEEKDAYS, DANDEE_SSML_STRING, CREME_SSML_STRING } from './constants';
 
 
 
@@ -14,12 +14,15 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Welcome to the Martha\'s Dandee Creme Alexa Skill. How can I help?';
+    const cardText = `Welcome to the Martha\'s Dandee Creme Alexa Skill. How can I help?`;
+    const speechText = `Welcome to the Martha\'s
+      ${DANDEE_SSML_STRING} ${CREME_SSML_STRING}
+      Alexa Skill. How can I help?`;
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard(SKILL_TITLE_NAME, speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, cardText)
       .getResponse();
   },
 };
@@ -34,11 +37,12 @@ const TodaysFlavorsIntentHandler = {
     const currentCycle = getCurrentCycle(Date.now());
 
     const flavors = calendar[currentCycle];
-    const speechText = `Today's flavors are ${flavors.join(', ')}`
+    const cardText = `Today's flavors are ${flavors.join(', ')}`;
+    const speechText = replaceStrings(`Today's flavors are ${flavors.join(', ')}`);
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard(SKILL_TITLE_NAME, speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, cardText)
       .getResponse();
   },
 };
@@ -61,7 +65,8 @@ const FutureFlavorsIntentHandler = {
     const currentCycle = getCurrentCycle(date);
 
     const flavors = calendar[currentCycle];
-    const speechText = `
+    const cardText = `The flavors for ${date.toUTCString().split(' ').slice(0, 4).join(' ')} are ${flavors.join(', ')}`;
+    const speechText = replaceStrings(`
       <speak>
       The flavors for ${WEEKDAYS[date.getDay()]},
 
@@ -69,9 +74,7 @@ const FutureFlavorsIntentHandler = {
 
       are ${flavors.join(', ')}
       </speak>
-    `;
-
-    const cardText = `The flavors for ${date.toUTCString().split(' ').slice(0, 4).join(' ')} are ${flavors.join(', ')}`;
+    `);
 
     return handlerInput.responseBuilder
       .speak(speechText)

@@ -12,6 +12,9 @@ export const CALENDAR_BUCKET_PARAMS = {
     Key: CALENDAR_KEY,
 };
 
+export const DANDEE_SSML_STRING = `<phoneme alphabet="ipa" ph="ˈdæn.di">Dandee</phoneme>`;
+export const CREME_SSML_STRING = `<phoneme alphabet="ipa" ph="kɹiːm">Creme</phoneme>`;
+
 export const WEEKDAYS = [
     'Sunday',
     'Monday',
@@ -37,7 +40,21 @@ export const MONTHS = [
     'December',
 ];
 
-export const WORD_MAPPINGS = {
-    'Rasp': 'Raspberry',
-    'Choc': 'Chocolate',
-}
+export const WORD_MAPPINGS = [
+    {
+        search: /Rasp(\s)/ig,
+        replace: 'Raspberry$1',
+    },
+    {
+        search: /Choc(\s)/ig,
+        replace: 'Chocolate$1',
+    },
+    {
+        search: /Cr(?:e|è)me(\s)/ig,
+        replace: 'Cream$1'
+    },
+    {
+        search: /(P\/B)/ig,
+        replace: 'Peanut Butter'
+    }
+];

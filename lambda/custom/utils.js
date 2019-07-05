@@ -5,6 +5,7 @@ import {
     PINNED_DATE_STRING,
     PINNED_DAY_CYCLE,
     CALENDAR_BUCKET_PARAMS,
+    WORD_MAPPINGS,
 } from './constants';
 
 
@@ -17,4 +18,11 @@ export const getCurrentCycle = (currentDate) => {
 export const getCalendar = async () => {
     const s3 = new AWS.S3();
     return JSON.parse((await s3.getObject(CALENDAR_BUCKET_PARAMS).promise()).Body.toString());
+};
+
+export const replaceStrings = (string) => {
+    let newString = string;
+
+    WORD_MAPPINGS.forEach(word => newString = newString.replace(word.search, word.replace));
+    return newString;
 };
