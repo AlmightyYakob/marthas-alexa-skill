@@ -89,8 +89,9 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    // Add detailing of commands
-    const speechText = 'You can say hello to me!';
+    const speechText = `You can ask for today's flavors by saying, what are today's flavors?
+      You can also ask about the flavors for a future date.
+      For example, you could say, what are the flavors for July 4th?`;
 
     return handlerInput.responseBuilder
       .speak(speechText)
