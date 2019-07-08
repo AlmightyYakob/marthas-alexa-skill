@@ -2,9 +2,8 @@
 /* eslint-disable  no-console */
 
 import * as Alexa from 'ask-sdk-core';
-import moment from 'moment';
 
-import { getCurrentCycle, getCalendar, replaceStrings } from './utils';
+import { getCurrentCycle, getCalendar, replaceStrings, getDate } from './utils';
 import { SKILL_TITLE_NAME, WEEKDAYS, DANDEE_SSML_STRING, CREME_SSML_STRING } from './constants';
 
 
@@ -14,8 +13,8 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const cardText = `Welcome to the Martha\'s Dandee Creme Alexa Skill. How can I help?`;
-    const speechText = `Welcome to the Martha\'s
+    const cardText = `Welcome to the Martha's Dandee Creme Alexa Skill. How can I help?`;
+    const speechText = `Welcome to the Martha's
       ${DANDEE_SSML_STRING} ${CREME_SSML_STRING}
       Alexa Skill. How can I help?`;
 
@@ -33,8 +32,13 @@ const TodaysFlavorsIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'todays_flavors';
   },
   async handle(handlerInput) {
+    const todaysDate = getDate();
+
     const calendar = await getCalendar();
-    const currentCycle = getCurrentCycle(Date.now());
+    const currentCycle = getCurrentCycle(todaysDate);
+
+    console.log('DATE', todaysDate);
+    console.log('CYCLE', currentCycle);
 
     const flavors = calendar[currentCycle];
     const cardText = `Today's flavors are ${flavors.join(', ')}`;
@@ -59,10 +63,11 @@ const FutureFlavorsIntentHandler = {
     console.log('DATE SLOT', dateSlot);
     console.log('DAY SLOT', daySlot);
 
-    const date = dateSlot
-    ? new Date(dateSlot)
-    : moment().day(daySlot).toDate();
+    const date = getDate(dateSlot, daySlot);
     const currentCycle = getCurrentCycle(date);
+
+    console.log('DATE', date);
+    console.log('CYCLE', currentCycle);
 
     const flavors = calendar[currentCycle];
     const cardText = `The flavors for ${date.toUTCString().split(' ').slice(0, 4).join(' ')} are ${flavors.join(', ')}`;

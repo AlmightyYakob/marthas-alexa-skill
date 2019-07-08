@@ -1,16 +1,37 @@
 import AWS from 'aws-sdk';
+import moment from 'moment';
 
 import {
     MS_PER_DAY,
-    PINNED_DATE_STRING,
+    PINNED_EPOCH_TIME_MS,
     PINNED_DAY_CYCLE,
     CALENDAR_BUCKET_PARAMS,
     WORD_MAPPINGS,
 } from './constants';
 
 
+export const getDate = (date, day) => {
+    const returnDate = date ? moment(date) : moment();
+    returnDate.utcOffset(-240);
+    
+    if (day) returnDate.day(day);
+
+    returnDate
+        .hours(0)
+        .minutes(0)
+        .seconds(0)
+        .milliseconds(0);
+    
+    return returnDate.toDate();
+}
+
 export const getCurrentCycle = (currentDate) => {
-    const pinnedDate = new Date(PINNED_DATE_STRING);
+    const pinnedDate = getDate(PINNED_EPOCH_TIME_MS);
+
+    console.log('CURRENT DATE', currentDate);
+    console.log('PINNED DATE', pinnedDate);
+    console.log('RAW DIFF', (currentDate - pinnedDate)/MS_PER_DAY);
+    
     const dayDifference = Math.ceil((currentDate - pinnedDate)/MS_PER_DAY);
     return (dayDifference + PINNED_DAY_CYCLE) % 18;
 };
