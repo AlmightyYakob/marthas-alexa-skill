@@ -12,16 +12,14 @@ import {
 
 export const getDate = (date, day) => {
     const returnDate = date ? moment(date) : moment();
-    returnDate.utcOffset(-240);
-    
-    if (day) returnDate.day(day);
-
     returnDate
         .hours(0)
         .minutes(0)
         .seconds(0)
-        .milliseconds(0);
+        .milliseconds(0)
+        .utcOffset(-240);
     
+    if (day) returnDate.day(day);
     return returnDate.toDate();
 }
 
