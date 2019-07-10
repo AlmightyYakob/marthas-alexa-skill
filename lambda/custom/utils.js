@@ -13,12 +13,12 @@ import {
 export const getDate = (date, day) => {
     const returnDate = date ? moment(date) : moment();
     returnDate
+        .utcOffset(-240)
         .hours(0)
         .minutes(0)
         .seconds(0)
-        .milliseconds(0)
-        .utcOffset(-240);
-    
+        .milliseconds(0);
+
     if (day) returnDate.day(day);
     return returnDate.toDate();
 }
@@ -29,7 +29,7 @@ export const getCurrentCycle = (currentDate) => {
     console.log('CURRENT DATE', currentDate);
     console.log('PINNED DATE', pinnedDate);
     console.log('RAW DIFF', (currentDate - pinnedDate)/MS_PER_DAY);
-    
+
     const dayDifference = Math.ceil((currentDate - pinnedDate)/MS_PER_DAY);
     return (dayDifference + PINNED_DAY_CYCLE) % 18;
 };
