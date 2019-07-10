@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import {
     MS_PER_DAY,
@@ -11,15 +11,15 @@ import {
 
 
 export const getDate = (date, day) => {
-    const returnDate = date ? moment(date) : moment();
-    returnDate
-        .utcOffset(-240)
-        .hours(0)
-        .minutes(0)
-        .seconds(0)
-        .milliseconds(0);
+    const today = moment.tz('America/New_York').hours(0).minutes(0).seconds(0).milliseconds(0);
+    if (!date && !day) return today.toDate();
 
-    if (day) returnDate.day(day);
+    const returnDate = date
+        ? moment.tz(date, 'America/New_York')
+        : moment(today).day(day);
+
+    if (day && today.day() >= returnDate.day()) returnDate.day(returnDate.day() + 7);
+
     return returnDate.toDate();
 }
 
