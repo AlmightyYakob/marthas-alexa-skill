@@ -3,9 +3,19 @@
 
 import * as Alexa from 'ask-sdk-core';
 
-import { getCurrentCycle, getCalendar, replaceStrings, getDate } from './utils';
-import { SKILL_TITLE_NAME, WEEKDAYS, DANDEE_SSML_STRING, CREME_SSML_STRING } from './constants';
-
+import {
+  getCurrentCycle,
+  getCalendar,
+  replaceStrings,
+  getDate,
+  getFlavorNextCycle,
+} from './utils';
+import {
+  SKILL_TITLE_NAME,
+  WEEKDAYS,
+  DANDEE_SSML_STRING,
+  CREME_SSML_STRING,
+} from './constants';
 
 
 const LaunchRequestHandler = {
@@ -13,7 +23,7 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const cardText = `Welcome to the Martha's Dandee Creme Alexa Skill. How can I help?`;
+    const cardText = 'Welcome to the Martha\'s Dandee Creme Alexa Skill. How can I help?';
     const speechText = `Welcome to the Martha's
       ${DANDEE_SSML_STRING} ${CREME_SSML_STRING}
       Alexa Skill. How can I help?`;
@@ -75,9 +85,47 @@ const FutureFlavorsIntentHandler = {
       <speak>
       The flavors for ${WEEKDAYS[date.getDay()]},
 
-      <say-as interpret-as="date">????${date.getMonth() < 9 ? 0 : ''}${date.getMonth()+1}${date.getDate() < 10 ? 0 : ''}${date.getDate()}</say-as>
+      <say-as interpret-as="date">????${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 10 ? 0 : ''}${date.getDate()}</say-as>
 
       are ${flavors.join(', ')}
+      </speak>
+    `);
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard(SKILL_TITLE_NAME, cardText)
+      .getResponse();
+  },
+};
+
+const NextTimeIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'next_time_intent';
+  },
+  async handle(handlerInput) {
+    const todaysDate = getDate();
+    const currentCycle = getCurrentCycle(todaysDate);
+
+    const flavor = handlerInput.requestEnvelope.request.intent.slots.flavor.value;
+    const nextCycle = await getFlavorNextCycle(flavor);
+    const cycleDiff = nextCycle - currentCycle;
+    console.log('Current Cycle', currentCycle);
+    console.log('Next Cycle', nextCycle);
+    console.log('Cycle Diff', cycleDiff);
+    console.log('Flavor', flavor);
+
+    const nextDate = new Date(todaysDate);
+    console.log('Next Date Before', nextDate);
+    nextDate.setDate(todaysDate.getDate() + cycleDiff);
+    console.log('Next Date After', nextDate);
+
+    const cardText = `The next day ${flavor} is on the menu is ${nextDate.toUTCString().split(' ').slice(0, 4).join(' ')}`;
+    const speechText = replaceStrings(`
+      <speak>
+      The next day ${flavor} is on the menu is
+
+      <say-as interpret-as="date">????${nextDate.getMonth() < 9 ? 0 : ''}${nextDate.getMonth() + 1}${nextDate.getDate() < 10 ? 0 : ''}${nextDate.getDate()}</say-as>.
       </speak>
     `);
 
@@ -156,9 +204,10 @@ exports.handler = skillBuilder
     LaunchRequestHandler,
     TodaysFlavorsIntentHandler,
     FutureFlavorsIntentHandler,
+    NextTimeIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
-    SessionEndedRequestHandler
+    SessionEndedRequestHandler,
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
